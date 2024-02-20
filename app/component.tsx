@@ -32,7 +32,7 @@ export default function Home() {
   // const [followers, setFollowers] = useState<Repository[]>([]); // Specify Repository[] type
   const [error, setError] = useState<string | null>(null);
   const [showRepo, setShowRepo] = useState<boolean>(false);
-  const [accessToken, setAccessToken] = useState("");
+  const [accessToken, setAccessToken] = useState(null);
   const clientId = "b5d1d0f74e1b8428438b";
 
   function loginWithGithub() {
@@ -43,8 +43,7 @@ export default function Home() {
 
   function logout() {
     localStorage.removeItem("accessToken");
-    setAccessToken("");
-    window.location.reload();
+    setAccessToken(null);
   }
 
   async function getAccessToken(codeParam) {
@@ -120,7 +119,16 @@ export default function Home() {
   });
   return (
     <main className="flex flex-col items-center justify-between w-full">
-      {accessToken == "" ? (
+      {accessToken === null ? (
+        <>
+          <button
+            className="bg-gray-200 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-300"
+            onClick={loginWithGithub}
+          >
+            Login
+          </button>
+        </>
+      ) : (
         <div className="absolute z-20 flex flex-col items-center justify-between h-full w-full">
           <div className="absolute top-0 right-0 m-4">
             <button
@@ -165,15 +173,6 @@ export default function Home() {
             </div>
           )}
         </div>
-      ) : (
-        <>
-          <button
-            className="bg-gray-200 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-300"
-            onClick={loginWithGithub}
-          >
-            Login
-          </button>
-        </>
       )}
     </main>
   );
