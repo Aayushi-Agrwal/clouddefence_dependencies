@@ -76,22 +76,6 @@ export default function Home() {
     }
   }, []);
 
-  async function getUserData(username: string, accessToken: string) {
-    await axios
-      .get(`https://localhost:4000/getUserData`, {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer" + localStorage.getItem("accessToken"),
-        },
-      })
-      .then((response) => {
-        return response.data;
-      })
-      .then((data) => {
-        console.log(data);
-      });
-  }
-
   const handleSearch = () => {
     getUserRepositories(username, localStorage.getItem("accessToken"))
       .then((data: Repository[]) => {
@@ -136,7 +120,7 @@ export default function Home() {
   });
   return (
     <main className="flex flex-col items-center justify-between w-full">
-      {accessToken ? (
+      {accessToken == "" ? (
         <div className="absolute z-20 flex flex-col items-center justify-between h-full w-full">
           <div className="absolute top-0 right-0 m-4">
             <button
