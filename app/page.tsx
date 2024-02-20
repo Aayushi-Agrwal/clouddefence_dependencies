@@ -132,9 +132,10 @@ export default function Home() {
     );
   });
 
+  let accessToken = localStorage.getItem("accessToken");
   return (
     <main className="flex flex-col items-center justify-between w-full">
-      {localStorage.getItem("accessToken") ? (
+      {accessToken ? (
         <div className="absolute z-20 flex flex-col items-center justify-between h-full w-full">
           <div className="absolute top-0 right-0 m-4">
             <button
