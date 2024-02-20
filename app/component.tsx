@@ -47,9 +47,12 @@ export default function Home() {
   }
 
   async function getAccessToken(codeParam) {
-    await fetch("http://localhost:4000/getAccessToken?code=" + codeParam, {
-      method: "GET",
-    })
+    await fetch(
+      "https://server-tan-two.vercel.app/getAccessToken?code=" + codeParam,
+      {
+        method: "GET",
+      }
+    )
       .then((response) => {
         return response.json();
       })
