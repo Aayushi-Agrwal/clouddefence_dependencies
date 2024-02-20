@@ -32,6 +32,7 @@ export default function Home() {
   // const [followers, setFollowers] = useState<Repository[]>([]); // Specify Repository[] type
   const [error, setError] = useState<string | null>(null);
   const [showRepo, setShowRepo] = useState<boolean>(false);
+  const [accessToken, setAccessToken] = useState("");
   const clientId = "b5d1d0f74e1b8428438b";
 
   function loginWithGithub() {
@@ -42,6 +43,7 @@ export default function Home() {
 
   function logout() {
     localStorage.removeItem("accessToken");
+    setAccessToken("");
     window.location.reload();
   }
 
@@ -57,6 +59,7 @@ export default function Home() {
 
         if (data.access_token) {
           localStorage.setItem("accessToken", data.access_token);
+          setAccessToken(data.access_token);
           setRerender(!rerender);
         }
       });
@@ -131,8 +134,6 @@ export default function Home() {
       </Link>
     );
   });
-
-  let accessToken = localStorage.getItem("accessToken");
   return (
     <main className="flex flex-col items-center justify-between w-full">
       {accessToken ? (
