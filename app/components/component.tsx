@@ -83,12 +83,19 @@ export default function Home() {
     <main className="flex flex-col items-center justify-between w-full">
       {!session ? (
         <>
-          <button
-            className="bg-gray-200 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-300"
-            onClick={() => signIn("github")}
-          >
-            Login
-          </button>
+          <div className="flex justify-center items-center h-screen w-screen">
+            <div className="bg-white p-8 rounded-lg shadow-md h-40">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                Login
+              </h2>
+              <button
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300 ease-in-out"
+                onClick={() => signIn("github")}
+              >
+                Login with GitHub
+              </button>
+            </div>
+          </div>
         </>
       ) : (
         <div className="absolute z-20 flex flex-col items-center justify-between h-full w-full">
