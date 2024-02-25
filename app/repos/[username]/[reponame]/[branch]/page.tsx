@@ -71,10 +71,7 @@ const Page = ({
 
   useEffect(() => {
     fetch(
-      `https://raw.githubusercontent.com/${params.username}/${params.reponame}/${params.branch}/pom.xml`,
-      {
-        headers: { Authorization: `${accessToken}` },
-      }
+      `https://raw.githubusercontent.com/${params.username}/${params.reponame}/${params.branch}/pom.xml`
     )
       .then((response) => response.text())
       .then((xmlText) => {
