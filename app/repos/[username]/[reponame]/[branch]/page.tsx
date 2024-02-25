@@ -1,7 +1,7 @@
 "use client";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import xmlJs from "xml-js";
+import { useSession } from "next-auth/react";
 
 function DependencyDisplay({ data }) {
   // Render dependencies
@@ -65,17 +65,22 @@ const Page = ({
 }) => {
   const [xmlData, setXmlData] = useState(null);
   const [error, setError] = useState();
+  const [branches, setBranches] = useState([]);
+  const { data: session } = useSession();
+  let accessToken = session?.access_token;
 
   useEffect(() => {
     fetch(
-      `https://raw.githubusercontent.com/${params.username}/${params.reponame}/${params.branch}/pom.xml`
-    ) // Replace with the URL or path to your XML data
+      `https://raw.githubusercontent.com/${params.username}/${params.reponame}/${params.branch}/pom.xml`,
+      {
+        headers: { Authorization: `${accessToken}` },
+      }
+    )
       .then((response) => response.text())
       .then((xmlText) => {
         const jsonData = xmlJs.xml2json(xmlText, { compact: true, spaces: 4 });
 
         setXmlData(JSON.parse(jsonData));
-        console.log(xmlData);
       })
 
       .catch((error) => {

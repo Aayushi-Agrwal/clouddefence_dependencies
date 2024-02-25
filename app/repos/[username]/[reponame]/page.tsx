@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 const Page = ({
   params,
@@ -8,15 +9,19 @@ const Page = ({
   params: { username: string; reponame: string };
 }) => {
   const [branches, setBranches] = useState([]);
+  const { data: session } = useSession();
+  let accessToken = session?.access_token;
 
   useEffect(() => {
     fetch(
-      `https://api.github.com/repos/${params.username}/${params.reponame}/branches`
+      `https://api.github.com/repos/${params.username}/${params.reponame}/branches`,
+      {
+        headers: { Authorization: `${accessToken}` },
+      }
     )
       .then((response) => response.json())
       .then((data) => {
         setBranches(data);
-        console.log(data);
       })
       .catch((error) => {
         console.error("Error fetching branches:", error);

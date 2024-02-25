@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 async function getUserRepositories(username: string, accessToken: string) {
   try {
     const response = await axios.get(
       `https://api.github.com/users/${username}/repos`,
       {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: { Authorization: `${accessToken}` },
       }
     );
     return response.data;
@@ -24,62 +25,20 @@ interface Repository {
   description: string;
   html_url: string;
 }
-
 export default function Home() {
-  const [rerender, setRerender] = useState(false);
+  const { data: session } = useSession();
   const [username, setUsername] = useState("");
-  const [repos, setRepos] = useState<Repository[]>([]); // Specify Repository[] type
-  // const [followers, setFollowers] = useState<Repository[]>([]); // Specify Repository[] type
+  const [repos, setRepos] = useState<Repository[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showRepo, setShowRepo] = useState<boolean>(false);
-  const [accessToken, setAccessToken] = useState(null);
-  const clientId = "b5d1d0f74e1b8428438b";
-
-  function loginWithGithub() {
-    window.location.assign(
-      "https://github.com/login/oauth/authorize?client_id=" + clientId
-    );
-  }
-
-  function logout() {
-    localStorage.removeItem("accessToken");
-    setAccessToken(null);
-  }
-
-  async function getAccessToken(codeParam) {
-    await fetch(
-      "https://server-tan-two.vercel.app/getAccessToken?code=" + codeParam,
-      {
-        method: "GET",
-      }
-    )
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-
-        if (data.access_token) {
-          localStorage.setItem("accessToken", data.access_token);
-          setAccessToken(data.access_token);
-          setRerender(!rerender);
-        }
-      });
-  }
+  let accessToken;
 
   useEffect(() => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const codeParam = urlParams.get("code");
-    console.log(codeParam);
-
-    if (codeParam && localStorage.getItem("accessToken") === null) {
-      getAccessToken(codeParam);
-    }
-  }, []);
+    accessToken = session?.access_token;
+  }, [session]);
 
   const handleSearch = () => {
-    getUserRepositories(username, localStorage.getItem("accessToken"))
+    getUserRepositories(username, accessToken)
       .then((data: Repository[]) => {
         setRepos(data);
         setError(null);
@@ -113,7 +72,7 @@ export default function Home() {
       >
         <h2 className="text-xl text-blue-300">{repo.name}</h2>
         {repo.description ? (
-          <p className="text-sm pt-2">{truncate(repo.description, 20)}</p>
+          <p className="text-sm pt-2">{truncate(repo.description, 15)}</p>
         ) : (
           <p className="text-sm pt-2">No description</p>
         )}
@@ -122,11 +81,11 @@ export default function Home() {
   });
   return (
     <main className="flex flex-col items-center justify-between w-full">
-      {accessToken === null ? (
+      {!session ? (
         <>
           <button
             className="bg-gray-200 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-300"
-            onClick={loginWithGithub}
+            onClick={() => signIn("github")}
           >
             Login
           </button>
@@ -136,7 +95,7 @@ export default function Home() {
           <div className="absolute top-0 right-0 m-4">
             <button
               className="bg-gray-200 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-300"
-              onClick={logout}
+              onClick={() => signOut()}
             >
               Logout
             </button>
