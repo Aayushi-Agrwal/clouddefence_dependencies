@@ -67,7 +67,6 @@ const Page = ({
   const [error, setError] = useState();
   const [branches, setBranches] = useState([]);
   const { data: session } = useSession();
-  let accessToken = session?.access_token;
 
   useEffect(() => {
     fetch(
