@@ -65,8 +65,6 @@ const Page = ({
 }) => {
   const [xmlData, setXmlData] = useState(null);
   const [error, setError] = useState();
-  const [branches, setBranches] = useState([]);
-  const { data: session } = useSession();
 
   useEffect(() => {
     fetch(
